@@ -1,0 +1,5 @@
+#!/usr/bin/sh
+
+xelatex num2sqrts.tex
+xelatex num2sqrts.tex
+rm *.aux *.log *.out
