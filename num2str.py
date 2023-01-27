@@ -7,9 +7,9 @@ def _num2sqrts(n, max_num=1000):
         mid = math.floor((n / 2) ** 2) + 0.5
     elif n < 0:
         mid = math.ceil(-(n / 2) ** 2) - 0.5
-    fsqrt = lambda n: math.copysign(math.sqrt(math.fabs(n)), n)
+
+    def fsqrt(n): return math.copysign(math.sqrt(math.fabs(n)), n)
     actual_mid = n / 2
-    loops = 1
     t = 0.5
     while True:
         a = fsqrt(mid + t)
@@ -22,6 +22,7 @@ def _num2sqrts(n, max_num=1000):
             return int(round(math.copysign(a ** 2, a))), \
                 int(round(math.copysign(b ** 2, b)))
         t += 1
+
 
 def _simplify(value):
     """化简形如`sqrt(a)`的根式，value是根号内正整数。"""
@@ -49,27 +50,31 @@ def _simplify(value):
 
 
 def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=False):
-    """返回一些特定有理数/无理数的表示：
-    
+    """将浮点数转换为数学表达式：
+
     1. 分子、分母都为整数的分数
     2. ±sqrt(a)/b型的数（a、b为整数）
     3. (±sqrt(a)±sqrt(b))/c型的数（a、b、c都是整数）
     4. 如上述(1)或(2)型的数乘以π
     5. 对上述(1)或(2)型的数施加反三角运算
 
-    max_num - 精度限制
-    arcus   - 使用哪个反三角函数表示
-    twice   - 防止递归
+    max_num : dict
+        精度控制：`{"frac": <分子、分母允许的最大值>, "sqrts": <给_num2sqrts的max_num参数>}`
+    arcus : str
+        使用哪个反三角函数表示，`asin`、`acos`或`atan`之一
+    twice : bool
+        防止递归，请不要将它改为`True`
     """
-    pi = chr(960)
     assert arcus in ["asin", "acos", "atan"]
     if int(value) == value:
         return "%d" % value
-    flag = "" if value > 0 else "-" 
-    a, b = Fraction(value).limit_denominator(max_num["frac"]).as_integer_ratio()
+    flag = "" if value > 0 else "-"
+    a, b = Fraction(value).limit_denominator(
+        max_num["frac"]).as_integer_ratio()
     if math.isclose(value, a / b):
         return "%d/%d" % (a, b)
-    a, b = Fraction(value ** 2).limit_denominator(max_num["frac"]).as_integer_ratio()
+    a, b = Fraction(
+        value ** 2).limit_denominator(max_num["frac"]).as_integer_ratio()
     if math.isclose(value ** 2, a / b):
         if b == 1:
             outter, inner = _simplify(a)
@@ -84,6 +89,7 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
     if twice:
         return None
     if (s := num2str(value / math.pi, max_num=max_num, twice=True)) is not None:
+        pi = chr(960)
         if s.startswith("-1/") or s.startswith("1/"):
             return s.replace("1/", pi + "/")
         elif "/" in s:
@@ -95,6 +101,7 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
     f = getattr(math, arcus[1:])
     if (s := num2str(f(value), max_num=max_num, twice=True)) is not None:
         return "%s(%s)" % (arcus, s)
+    # 请允许我在这里硬编码一个数据，不然的话就太~慢~啦~
     for c in range(1, 100):
         if (l := _num2sqrts(value * c, max_num=max_num["frac"])) is not None:
             outter_a, inner_a = _simplify(l[0])
@@ -108,4 +115,3 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
             else:
                 return "(%s%ssqrt(%d)%s%ssqrt(%d))/%d" % (flag_a, outter_a, inner_a, flag_b, outter_b, inner_b, c)
     return str(value)
-
