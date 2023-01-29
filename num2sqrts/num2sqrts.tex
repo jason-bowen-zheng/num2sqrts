@@ -5,13 +5,11 @@
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
 \usepackage{listings}
-\usepackage{xcolor}
 \newtheorem{proposition}{命题}
 \DeclareMathOperator{\sgn}{\mathrm{sgn}}
 \DeclareMathOperator{\trunc}{\mathrm{trunc}}
 \lstset{
     basicstyle=\small\tt,
-    commentstyle=\color{gray},
     numbers=left
 }
 
@@ -57,21 +55,19 @@
 \begin{lstlisting}[language=python, name=example]
 import math
 
-def _fsqrt(n):
-    return math.copysign(math.sqrt(math.fabs(n)), n)
-
 def num2sqrts(n, max_num=1000):
 	if n >= 0:
         mid = math.floor((n / 2) ** 2) + 0.5
     elif n < 0:
         mid = math.ceil(-(n / 2) ** 2) - 0.5
+    fsqrt = lambda n: math.copysign(math.sqrt(math.fabs(n)), n)
     actual_mid = n / 2
     t = 0.5
     while True:
-        a = _fsqrt(mid + t)
+        a = fsqrt(mid + t)
         d = math.fabs(a - actual_mid)
         b = actual_mid - d
-        b = _fsqrt(math.copysign(round(b ** 2), b))
+        b = fsqrt(math.copysign(round(b ** 2), b))
 \end{lstlisting}
 理论上，这个算法可以一直运行下去，直到找到合适的值。但是考虑到实际情况，我还是设置了停止条件。
 \begin{lstlisting}[language=python, name=example]

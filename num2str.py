@@ -1,26 +1,26 @@
-from fractions import Fraction
-import math
+from fractions import Fraction as _Frac
+import math as _math
 
 
 def _num2sqrts(n, max_num=1000):
     if n >= 0:
-        mid = math.floor((n / 2) ** 2) + 0.5
+        mid = _math.floor((n / 2) ** 2) + 0.5
     elif n < 0:
-        mid = math.ceil(-(n / 2) ** 2) - 0.5
+        mid = _math.ceil(-(n / 2) ** 2) - 0.5
 
-    def fsqrt(n): return math.copysign(math.sqrt(math.fabs(n)), n)
+    def fsqrt(n): return _math.copysign(_math.sqrt(_math.fabs(n)), n)
     actual_mid = n / 2
     t = 0.5
     while True:
         a = fsqrt(mid + t)
-        d = math.fabs(a - actual_mid)
+        d = _math.fabs(a - actual_mid)
         b = actual_mid - d
-        b = fsqrt(math.copysign(round(b ** 2), b))
+        b = fsqrt(_math.copysign(round(b ** 2), b))
         if abs(a ** 2) > max_num or abs(b ** 2) > max_num:
             return None
-        if math.isclose(a + b, n):
-            return int(round(math.copysign(a ** 2, a))), \
-                int(round(math.copysign(b ** 2, b)))
+        if _math.isclose(a + b, n):
+            return int(round(_math.copysign(a ** 2, a))), \
+                int(round(_math.copysign(b ** 2, b)))
         t += 1
 
 
@@ -33,7 +33,7 @@ def _simplify(value):
         if value == i:
             result.append(i)
             break
-        if math.gcd(value, i) == i:
+        if _math.gcd(value, i) == i:
             result.append(i)
             value = value // i
             i = 2
@@ -46,7 +46,7 @@ def _simplify(value):
             outter *= i
         else:
             inner.append(i)
-    return flag * outter, math.prod(inner)
+    return flag * outter, _math.prod(inner)
 
 
 def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=False):
@@ -69,13 +69,12 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
     if int(value) == value:
         return "%d" % value
     flag = "" if value > 0 else "-"
-    a, b = Fraction(value).limit_denominator(
-        max_num["frac"]).as_integer_ratio()
-    if math.isclose(value, a / b):
+    a, b = _Frac(value).limit_denominator(max_num["frac"]).as_integer_ratio()
+    if _math.isclose(value, a / b):
         return "%d/%d" % (a, b)
-    a, b = Fraction(
+    a, b = _Frac(
         value ** 2).limit_denominator(max_num["frac"]).as_integer_ratio()
-    if math.isclose(value ** 2, a / b):
+    if _math.isclose(value ** 2, a / b):
         if b == 1:
             outter, inner = _simplify(a)
             return "%s%ssqrt(%d)" % (flag, "" if outter == 1 else outter, inner)
@@ -83,12 +82,12 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
             return "%ssqrt(%d)/%d" % (flag, b, b)
         else:
             outter, inner = _simplify(a * b)
-            fact = math.gcd(outter, b)
+            fact = _math.gcd(outter, b)
             a, b = int(outter / fact), b / fact
             return "%s%ssqrt(%d)/%d" % (flag, "" if outter == 1 else a, inner, b)
     if twice:
         return None
-    if (s := num2str(value / math.pi, max_num=max_num, twice=True)) is not None:
+    if (s := num2str(value / _math.pi, max_num=max_num, twice=True)) is not None:
         pi = chr(960)
         if s.startswith("-1/") or s.startswith("1/"):
             return s.replace("1/", pi + "/")
@@ -98,7 +97,7 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
             if s in ["1", "-1"]:
                 s = flag
             return s + pi
-    f = getattr(math, arcus[1:])
+    f = getattr(_math, arcus[1:])
     if (s := num2str(f(value), max_num=max_num, twice=True)) is not None:
         return "%s(%s)" % (arcus, s)
     # 请允许我在这里硬编码一个数据，不然的话就太~慢~啦~
