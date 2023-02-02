@@ -84,7 +84,7 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
             outter, inner = _simplify(a * b)
             fact = _math.gcd(outter, b)
             a, b = int(outter / fact), b / fact
-            return "%s%ssqrt(%d)/%d" % (flag, "" if outter == 1 else a, inner, b)
+            return "%s%ssqrt(%d)/%d" % (flag, "" if a == 1 else a, inner, b)
     if twice:
         return None
     if (s := num2str(value / _math.pi, max_num=max_num, twice=True)) is not None:
