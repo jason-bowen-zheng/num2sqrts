@@ -53,7 +53,7 @@ def perform1():
     ax.xaxis.set_major_formatter(lambda x, pos: int(x - 100))
     ax.set_ylabel("y")
     ax.yaxis.set_major_formatter(lambda y, pos: int(-y + 100))
-    fig.savefig("perform1.png")
+    fig.savefig("perform1.pdf")
     print()
 
 

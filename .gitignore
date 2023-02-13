@@ -3,3 +3,6 @@ __pycache__/
 *.aux
 *.log
 *.out
+
+num2sqrts/*.pdf
+num2sqrts/*.json

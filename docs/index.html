@@ -6,48 +6,50 @@
 	<meta charset="utf-8" content="width=device-width, initial-scale=1" name="viewport">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" crossorigin="anonymous">
 	<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" crossorigin="anonymous"></script>
-	<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+		crossorigin="anonymous"></script>
 	<script>
 		document.addEventListener("DOMContentLoaded", () => {
 			renderMathInElement(document.body, {
 				delimiters: [
-					{left: "$$", right: "$$", display: true},
-					{left: "$", right: "$", display: false}
+					{ left: "$$", right: "$$", display: true },
+					{ left: "$", right: "$", display: false }
 				],
 				throwOnError: false
 			});
 		});
 	</script>
 	<style>
-	img {
-		display: block;
-		margin: 0 auto;
-	}
-
-	@media (max-width: 575.98px) {
-
 		img {
-			width: 95%;
-		}
-	}
-
-	@media (min-width: 576px) {
-
-		body {
-			margin-left: 5%;
-			margin-right: 5%;
+			display: block;
+			margin: 0 auto;
 		}
 
-		img {
-			max-width: 75%;
+		@media (max-width: 575.98px) {
+
+			img {
+				width: 95%;
+			}
 		}
-	}
+
+		@media (min-width: 576px) {
+
+			body {
+				margin-left: 5%;
+				margin-right: 5%;
+			}
+
+			img {
+				max-width: 75%;
+			}
+		}
 	</style>
 </head>
 
 <body>
 	<h1 style="text-align:center;">num2str</h1>
-	<p><i>num2str</i> is a tiny Python library to convert a floating number to mathematical expressions. The algorithm, which can be used in numerical calculation tools, is simple and efficient.</p>
+	<p><i>num2str</i> is a tiny Python library to convert a floating number to mathematical expressions. The algorithm,
+		which can be used in numerical calculation tools, is simple and efficient.</p>
 	<p>Source file can be downloaded <a href="https://github.com/jason-bowen-zheng/num2str">here</a>.</p>
 	<p>The following example shows how to use this lib:</p>
 	<pre>
@@ -71,9 +73,11 @@
 		<li>Two square roots $\frac{\sqrt{a}+\sqrt{b}}{c}$</li>
 	</ol>
 	<p>The $n$ in $n\pi$, $\arcsin n$, $\arccos n$ and $\arctan n$ only support fraction and root.</p>
-	<p>We use a new algorithm to calculate the (5) format, You can find more information in <a href="num2sqrts.pdf">this article</a>.</p>
+	<p>We use a new algorithm to calculate the (5) format, You can find more information in <a href="num2sqrts.pdf">this
+			article</a>.</p>
 	<img src="perform1.png" alt="perform">
-	<p>The above figure is about the algorithm's efficency. This indicates how many steps it takes for the algorithm to find the result to $\sqrt{x}+\sqrt{y}$.</p>
+	<p>The above figure is about the algorithm's efficency. This indicates how many steps it takes for the algorithm to
+		find the result to $\sqrt{x}+\sqrt{y}$.</p>
 </body>
 
 </html>
