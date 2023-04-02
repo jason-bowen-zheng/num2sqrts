@@ -57,35 +57,7 @@ def perform1():
     print()
 
 
-def perform2():
-    # 性能测试2
-    from progress.bar import Bar
-    import statistics as stat
-    from json import dump
-    L = []
-    analyze = []
-    bar = Bar("Processing", max=99 * 5, suffix="%(percent)d%%")
-    for _ in range(5):
-        l = []
-        for n in range(1, 100):
-            num = (math.sqrt(1000) - math.sqrt(999)) / n
-            start = time()
-            for i in range(1, 100):
-                if num2sqrts(num * i) is not None:
-                    bar.next()
-                    break
-            l.append(time() - start)
-        L.append(l)
-        slope, intercept = stat.linear_regression(range(1, 100), l)
-        correlation = stat.correlation(range(1, 100), l)
-        analyze.append({"slope": slope, "intercept": intercept, "correlation": correlation})
-    dump({"data": L, "analyze": analyze}, open("perform2.json", "w+"), indent="\t")
-    print()
-
-
 if __name__ == "__main__":
     from sys import argv
     if argv[1] == "p1":
         perform1()
-    elif argv[1] == "p2":
-        perform2()

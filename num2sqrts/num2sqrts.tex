@@ -1,66 +1,64 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper, UTF8]{ctexart}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
 \usepackage{listings}
-\newtheorem{proposition}{Proposition}
+\newtheorem{proposition}{命题}
 \DeclareMathOperator{\sgn}{\mathrm{sgn}}
-\DeclareMathOperator{\trunc}{\mathrm{trunc}}
 \lstset{
     basicstyle=\small\tt,
     numbers=left
 }
 
-\title{The simplest algorithm to convert a floating-point number into the sum of two square roots}
-\author{Jason Zheng}
+\title{将一个浮点数转换为两根式之和的最简算法}
+\author{郑}
 
 \begin{document}
 \maketitle
 
-\section{Introduction}
-Some numerical calculators will return mathematical expressions of the form $\dfrac{\pi}{3}$ or $\dfrac{2\sqrt{2}}{3}$ instead of floating-point numbers when calculating fractions and radicals, and can also display $1+\sqrt{2}$ and $\dfrac{\sqrt{2}+\sqrt{3}}{2}$. The first two can be derived in almost an instant by simple arithmetic, but the last two involve addition operations. If we want to find the values of $a,b,c$ in $\dfrac{\sqrt{a}+\sqrt{b}}{c}$ separately, the most straightforward way is to use 3 for-loops. But this is very inefficient. How can we reduce the use of loops and increase efficiency? That's what I wrote this article for: to introduce a new algorithm to convert a floating-point number into the sum of two square roots.
+\section{引言}
+一些数值计算器在计算分式、根式以及角度时会返回类似$\dfrac{\pi}{3}$或$\dfrac{2\sqrt{2}}{3}$的结果而非浮点数. 它们同样也会显示$1+\sqrt{2}$和$\dfrac{\sqrt{2}+\sqrt{3}}{2}$. 前两者可通过简单的数学运算得出，但是后面两个涉及到了加法运算. 如果我们想分别求出$\dfrac{\sqrt{a}+\sqrt{b}}{c}$中的$a$、$b$和$c$，最简单的方法是使用三重for循环，但这是效率非常低的方法. 我们是否可以设计一种方法高效的解决上述问题？这就是我创作这篇文章的目的：介绍一个新的算法将一个浮点数转换为两根式之和.
 
-\section{Theory}
-We start with the form without the denominator. To reduce repetition, first define a function\[S(x,y)=\sgn(x)\sqrt{|x|}+\sgn(y)\sqrt{|y|} \quad\text{for } x,y\in\mathbb{Z}\]If only the floating-point number $n=S(a,b)$ is known, some mathematical tricks can be used and just use a while loop to find $a$ and $b$, instead of using a double for loop. In short, we are trying to find $S^{-1}(x)$.
+\section{理论}
+我们先讨论没有分母的形式. 为叙述方便，先定义一函数\[S(x,y)=\sgn(x)\sqrt{|x|}+\sgn(y)\sqrt{|y|} \quad\mbox{其中}x,y\in\mathbb{Z}\]如果我们仅仅知道浮点数$n=S(a,b)$，我们可以使用一些数学技巧和仅一个while循环求出$a$和$b$，而不是使用双重for循环. 简而言之，我们的目的是找到$S^{-1}:\mathbb{R}\to\mathbb{Z}^2$.
 
-First of all, it is impossible to compute $S^{-1}(x)$ using the specified formula, too much information is already lost in floating-point numbers. Using the exhaustive method becomes the only way, but which method to use and which starting value to set is a matter of discussion. The first one I have already explained before, and the second one will be discussed next, starting with the following true proposition
+当然，使用既定公式求出$S^{-1}(x)$是不可能的. 唯一可行的途径是穷举搜索. 使用不同的方法进行穷举都可以获得正确的结果，但效率的差异可能是巨大的. 我将介绍一种效率较高的方法. 先从以下真命题开始：
 \begin{proposition}
-    There is a sum of two numbers $a+b$ and $c=\dfrac{a+b}{2}$, then $|c-a|=|c-b|$.
+    若已知两数之和$a+b$，以及它们的均值$c=\dfrac{a+b}{2}$，那么$|c-a|=|c-b|$. 
 \end{proposition}
+根据上述命题，若已知$n=S(a,b)$, 我们可以从$\dfrac{n}{2}$开始向$\pm\infty$方向搜索. 一旦确定了$a$就可以知道唯一的$b$，最后我们仅仅需要一些额外的判断就能得知它们是否为所求.
 
-According to the proposition, there is $n=S(a,b)$, and we can search from $\dfrac{n}{2}$ in the direction of $+\infty$ or $-\infty$, and as soon as $a$ is located there can be a unique $b$, and another conditional judgment can determine whether they are the desired ones.
+当然，使用$\dfrac{n}{2}$作为初始值是不合适的，因为我们需要的结果是两个整数. 使用截尾取整后的$\left(\dfrac{n}{2}\right)^2$更适合.
 
-Of course, it is not appropriate to take $\dfrac{n}{2}$ as the starting value, we require two integers, to truncate the tail after rounding $\left(\dfrac{n}{2}\right)^2$ as the starting value is more appropriate.
+不过，我们可以计算出$\left(\dfrac{\sqrt{100}+\sqrt{101}}{2}\right)^2\approx100.499$，它会舍入到100，这样的设计也是有漏洞的. 但是，有如下极限\[\lim_{x\to+\infty}\left(\frac{\sqrt{x}+\sqrt{x+1}}{2}\right)^2-x=\frac{1}{2}\]它表示函数$f(x)=\left(\dfrac{\sqrt{x}+\sqrt{x+1}}{2}\right)^2$可以近似成$x+\dfrac{1}{2}$.
 
-However, consider $\left(\dfrac{\sqrt{100}+\sqrt{101}}{2}\right)^2\approx100.499$, which is truncated to 100, and there is an omission in this design. However, there is the following limit \[\lim_{x\to+\infty} \left(\frac{\sqrt{x}+\sqrt{x+1}}{2}\right)^2 - x=\frac{1}{2}\] which shows that the function $f(x)=\left(\dfrac{\sqrt{x}+\sqrt{x+1}}{2}\right)^2$ can be approximated as $x+\dfrac{1}{2}$, and the error is already less than $1\%$ when $x>5.76$.
+这样，即使$S(a,b)$中的$a$、$b$的差值很小我们也能分别求出它们。
 
-In this way, we can find the two numbers in the root sign even if they are close to each other.
-
-From the above analysis, we can set the starting value
+根据以上的分析，我们可以这样计算初始值
 \[
     start(n)=
     \begin{cases}
-        \trunc(\frac{n}{2})^2+\frac{1}{2}  & \text{if }n>0 \\
-        -\trunc(\frac{n}{2})^2-\frac{1}{2} & \text{if }n<0
+        \lfloor(\frac{n}{2})^2\rfloor+\frac{1}{2}  &n>0 \\
+        -\lfloor(\frac{n}{2})^2\rfloor-\frac{1}{2} &n<0
     \end{cases}
 \]
 
-In the following, for writing convenience, the square root of a negative number is considered to be the square root of its absolute value multiplied by -1.
+为了书写方便，下面规定一负数的平方根是其绝对值平方根的相反数.
 
-Knowing that $n=S(a,b)$, after setting the starting value $start$, let $step=0.5$ and find an endpoint \[\alpha=start-step\] then we can calculate the other endpoint \[\beta=\frac{n}{2}-|\sqrt{a}-\frac{n}{2}|\] Since $\beta $ must be an integer, it is also necessary to do the following \[\beta=\sqrt{\sgn(\beta)\mathrm{round}(\beta^2)}\] where \verb|round| means rounded to the nearest integer.
+已知$n=S(a,b)$，初始值$start=start(n)$，令$step=0.5$并找到第一个数字\[\alpha=start-step\]接着就能求出第二个数字\[\beta=\frac{n}{2}-|\sqrt{a}-\frac{n}{2}|\]$\beta$必须是一个整数，我们接下来还要做如下操作\[\beta=\sqrt{\sgn(\beta)\mathrm{round}(\beta^2)}\]其中\verb|round|表示舍入到最近的整数.
 
-If $\sqrt{\alpha}+\sqrt{\beta}=n$, then $\alpha$ and $\beta$ are the required $a$ and $b$. Otherwise make $step\pm1$ and keep looking in the direction of positive or negative infinity.
+如果$|\sqrt{\alpha}+\sqrt{\beta}-n|\leq\varepsilon$，其中$\varepsilon$表示一个很小的数，那么$\alpha$和$\beta$就是所求的$a$和$b$. 否则我们令$step=step+1$继续向正无穷方向搜索.
 
-\section{Implementation}
-The following example uses the Python standard library, or you can also use libraries like \verb|mpmath| to improve precision.
+\section{实现}
+以下是本算法的Python实现.
 
 \begin{lstlisting}[language=python, name=example1]
 import math
 
 def num2sqrts(n, max_num=1000):
-	if n >= 0:
+    if n >= 0:
         mid = math.floor((n / 2) ** 2) + 0.5
     elif n < 0:
         mid = math.ceil(-(n / 2) ** 2) - 0.5
@@ -73,7 +71,7 @@ def num2sqrts(n, max_num=1000):
         b = actual_mid - d
         b = fsqrt(math.copysign(round(b ** 2), b))
 \end{lstlisting}
-In theory, the algorithm can keep running until it finds the right value. However, considering the practical situation, the stopping condition still needs to be set.
+理论上来说，该算法可以一直执行，直到找到正确的结果. 但是考虑到实际情况，我们必须有一个停止条件.
 \begin{lstlisting}[language=python, name=example1]
         if abs(a ** 2) > max_num or abs(b ** 2) > max_num:
             return
@@ -82,34 +80,33 @@ In theory, the algorithm can keep running until it finds the right value. Howeve
                 int(round(math.copysign(b ** 2, b)))
         t += 1
 \end{lstlisting}
-Finally, function \verb|num2sqrts| returns tuples of length 2. If the return value is \verb|None|, then the right value isn't found.
+最后，函数\verb|num2sqrts|长度为2的元组作为结果. 若返回\verb|None|，这表示程序没有找到正确的结果.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.8\linewidth]{perform1.pdf}
-    \caption{Perform of this algorithm}
+    \caption{算法的表现}
     \label{fig:perform1}
 \end{figure}
 
-To show the performance of this algorithm, I take$-100\leq x\leq100$ and $-100\leq y\leq100$, then calculate the number of cycles needed to find $x$ and $y$ in $S(x,y)$, and mark them with different colors. So, Figure \ref{fig:perform1} is drawn. It can be seen that as the difference between x and y gets larger, it takes longer.
+为了展示算法的表现，我令$-100\leq x\leq100$和$-100\leq y\leq100$，接着记录算法需要多少次循环可求出$S(x,y)$中的$x$和$y$，最后把它们以不同的颜色标识（见图\ref{fig:perform1}）. 可见，当$x$、$y$之差越大时，需要执行更多次的循环.
 
-But when we execute the following (or similar) lines
+不过当我们运行如下（或类似）语句时
 \begin{lstlisting}[language=python]
 num2sqrts(2 * math.sqrt(123))
 \end{lstlisting}
-it returns \verb|(492, 0)|. The loop is executed 438 times. But the value $2\sqrt{123}$ can be found by a simpler method. So I assign all the values on the diagonal of the first and third quadrants to 1.
+函数返回\verb|(492, 0)|，循环执行了438次. 不过$2\sqrt{123}$这个结果可以以一个更简单的算法找到，故我将图\ref{fig:perform1}中一、三象限对角线上的值全部赋值为1.
 
-At the end, I will explain what to do if a denominator is added. It would be too inefficient to find a new algorithm, and we can completely exhaust the denominator.
+最后，我将阐述分母不为1的情况. 再寻找一个算法显得异常低效，我们完全可以穷举分母.
 \begin{lstlisting}[language=python, name=example2]
 def num2sqrts2(value):
     for n in range(1, 100):
         if (ret := num2sqrts(value * n)) is not None:
             return *ret, n
 \end{lstlisting}
-The range of the exhaustive enumeration is freely expandable (in this case 1 - 99), and the time spent is tested to increase linearly.\footnote{Data from \url{https://jason-bowen-zheng.github.io/num2str/perform2.json}}
+毫无疑问，穷举的范围可以随意扩大（在这里是1--99）. 相应的，算法运行的时间也有可能会增加.
 
-\section{Conclusion}
-That's it, it's simple, huh! I'm sorry to end on this short note, but there's not much more to write. Anyway, I think it's a very efficient algorithm.
+\section{结论}
+以上就是该算法的全部内容了. 该算法可以应用在数值计算领域，如给出几个根式经过四则运算后的解析解. 再与其它的相似算法相结合则可以找到更多浮点数对应的数学表达式.
 
-More information can be found at \url{https://github.com/jason-bowen-zheng/num2str}.
 \end{document}

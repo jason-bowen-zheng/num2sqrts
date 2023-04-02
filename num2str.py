@@ -55,7 +55,7 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
     1. 分子、分母都为整数的分数
     2. ±sqrt(a)/b型的数（a、b为整数）
     3. (±sqrt(a)±sqrt(b))/c型的数（a、b、c都是整数）
-    4. 如上述(1)或(2)型的数乘以π
+    4. 对上述(1)或(2)型的数乘以π
     5. 对上述(1)或(2)型的数施加反三角运算
 
     max_num : dict
