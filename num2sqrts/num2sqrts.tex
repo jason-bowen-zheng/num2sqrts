@@ -82,14 +82,14 @@ def num2sqrts(n, max_num=1000):
 \end{lstlisting}
 最后，函数\verb|num2sqrts|长度为2的元组作为结果. 若返回\verb|None|，这表示程序没有找到正确的结果.
 
-\begin{figure}[tb]
+\begin{figure}[tp]
     \centering
     \includegraphics[width=0.8\linewidth]{perform1.pdf}
     \caption{算法的表现}
     \label{fig:perform1}
 \end{figure}
 
-为了展示算法的表现，我令$-100\leq x\leq100$和$-100\leq y\leq100$，接着记录算法需要多少次循环可求出$S(x,y)$中的$x$和$y$，最后把它们以不同的颜色标识（见图\ref{fig:perform1}）. 可见，当$x$、$y$之差越大时，需要执行更多次的循环.
+为了展示算法的表现，我令$-100\leq x\leq100$和$-100\leq y\leq100$，接着记录算法需要多少次循环可求出$S(x,y)$中的$x$和$y$，最后把它们以不同的颜色标识（见图 \ref{fig:perform1}）. 可见，当$x$、$y$之差越大时，需要执行更多次的循环.
 
 不过当我们运行如下（或类似）语句时
 \begin{lstlisting}[language=python]
