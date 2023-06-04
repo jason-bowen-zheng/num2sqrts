@@ -2,6 +2,7 @@
 
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{biblatex}
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
 \usepackage{listings}
@@ -11,6 +12,7 @@
     basicstyle=\small\tt,
     numbers=left
 }
+\addbibresource{num2sqrts.bib}
 
 \title{将一个浮点数转换为两根式之和的最简算法}
 \author{郑}
@@ -84,7 +86,7 @@ def num2sqrts(n, max_num=1000):
 
 \begin{figure}[tp]
     \centering
-    \includegraphics[width=0.8\linewidth]{perform1.pdf}
+    \includegraphics[width=0.8\linewidth]{perform.pdf}
     \caption{算法的表现}
     \label{fig:perform1}
 \end{figure}
@@ -95,7 +97,7 @@ def num2sqrts(n, max_num=1000):
 \begin{lstlisting}[language=python]
 num2sqrts(2 * math.sqrt(123))
 \end{lstlisting}
-函数返回\verb|(492, 0)|，循环执行了438次. 不过$2\sqrt{123}$这个结果可以以一个更简单的算法找到，故我将图\ref{fig:perform1}中一、三象限对角线上的值全部赋值为1.
+函数返回\verb|(492, 0)|，循环执行了438次. 不过$2\sqrt{123}$这个结果可以以一个更简单的算法找到，故我将图 \ref{fig:perform1} 中一、三象限对角线上的值全部赋值为1.
 
 最后，我将阐述分母不为1的情况. 再寻找一个算法显得异常低效，我们完全可以穷举分母.
 \begin{lstlisting}[language=python, name=example2]
@@ -106,7 +108,24 @@ def num2sqrts2(value):
 \end{lstlisting}
 毫无疑问，穷举的范围可以随意扩大（在这里是1--99）. 相应的，算法运行的时间也有可能会增加.
 
+\section{比较}
+% normal_one(34.35s) vs num2sqrts(0.14): 251.22
+使用嵌套的for循环（我称其为 \verb|normal_one| 算法）同样也可以求出两根式之和.
+
+mpmath\cite{mpmath}有\verb|mpmath.identify|函数也可以将浮点数转换为数学表达式，且支持更复杂的形式：
+\begin{lstlisting}[language=python]
+>>> import mpmath, sympy
+>>> s = mpmath.identify(mpmath.sqrt(2) + mpmath.sqrt(3))
+>>> s
+'sqrt(((10+sqrt(96))/2))'
+>>> sympy.simplify(s)
+sqrt(2*sqrt(6) + 5)
+\end{lstlisting}
+但是，参照上述的运行结果，问题则变成了化简双重根号，就需要编写化简双重根号的程序了，这里不再赘述.
+
 \section{结论}
-以上就是该算法的全部内容了. 该算法可以应用在数值计算领域，如给出几个根式经过四则运算后的解析解. 再与其它的相似算法相结合则可以找到更多浮点数对应的数学表达式.
+在这篇文章中，我介绍了 \verb|num2sqrts| 算法，它可以将一些浮点数转换为与之相等的、具有特定形式的数学表达式. 同时，该算法简单、快速，适合应用在科学计算器中.
+
+\printbibliography[title={参考文献}]
 
 \end{document}

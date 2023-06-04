@@ -1,9 +1,18 @@
+from progress.bar import Bar
 import math
+import random
 from time import time
 
 
 def _fsqrt(n):
     return math.copysign(math.sqrt(math.fabs(n)), n)
+
+
+def normal_one(n):
+    for x in range(1001):
+        for y in range(1001):
+            if math.isclose(_fsqrt(x) + _fsqrt(y), n):
+                return x, y
 
 
 def num2sqrts(n, max_num=1000, count_loops=False):
@@ -32,9 +41,35 @@ def num2sqrts(n, max_num=1000, count_loops=False):
         t += 1
 
 
-def perform1():
-    # 性能测试1
-    from progress.bar import Bar
+def compare():
+    print("normal_one vs num2sqrts")
+    random.seed(100)
+    total_no = 0
+    bar = Bar("normal_one", max=1000, suffix="%(percent)d%%")
+    for i in range(1000):
+        x, y = random.randint(0, 100), random.randint(0, 100)
+        now = time()
+        normal_one(_fsqrt(x) + _fsqrt(y))
+        total_no += time() - now
+        bar.next()
+    print()
+
+    random.seed(100)
+    total_ns = 0
+    bar = Bar("num2sqrts ", max=1000, suffix="%(percent)d%%")
+    for i in range(1000):
+        x, y = random.randint(0, 100), random.randint(0, 100)
+        now = time()
+        num2sqrts(_fsqrt(x) + _fsqrt(y))
+        total_ns += time() - now
+        bar.next()
+    print()
+    print("normal_one : %f" % total_no)
+    print("num2sqrts  : %f" % total_ns)
+    print("rate       : %f" % (total_no / total_ns))
+
+
+def perform():
     import matplotlib.pyplot as plt
     import numpy as np
     mat = np.zeros((201, 201))
@@ -53,11 +88,13 @@ def perform1():
     ax.xaxis.set_major_formatter(lambda x, pos: int(x - 100))
     ax.set_ylabel("y")
     ax.yaxis.set_major_formatter(lambda y, pos: int(-y + 100))
-    fig.savefig("perform1.pdf")
+    fig.savefig("perform.pdf")
     print()
 
 
 if __name__ == "__main__":
     from sys import argv
-    if argv[1] == "p1":
-        perform1()
+    if argv[1] == "perform":
+        perform()
+    elif argv[1] == "compare":
+        compare()
