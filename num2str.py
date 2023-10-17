@@ -101,7 +101,7 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
     if (s := num2str(f(value), max_num=max_num, twice=True)) is not None:
         return "%s(%s)" % (arcus, s)
     # 请允许我在这里硬编码一个数据，不然的话就太~慢~啦~
-    for c in range(1, 100):
+    for c in range(1, 101):
         if (l := _num2sqrts(value * c, max_num=max_num["frac"])) is not None:
             outter_a, inner_a = _simplify(l[0])
             outter_b, inner_b = _simplify(l[1])

@@ -3,9 +3,12 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{biblatex}
+\usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
 \usepackage{listings}
+\usepackage{multirow}
+\usepackage{warpcol}
 \newtheorem{proposition}{命题}
 \DeclareMathOperator{\sgn}{\mathrm{sgn}}
 \lstset{
@@ -15,7 +18,7 @@
 \addbibresource{num2sqrts.bib}
 
 \title{将一个浮点数转换为两根式之和的最简算法}
-\author{郑}
+\author{zhengxyz123}
 
 \begin{document}
 \maketitle
@@ -36,7 +39,7 @@
 
 不过，我们可以计算出$\left(\dfrac{\sqrt{100}+\sqrt{101}}{2}\right)^2\approx100.499$，它会舍入到100，这样的设计也是有漏洞的. 但是，有如下极限\[\lim_{x\to+\infty}\left(\frac{\sqrt{x}+\sqrt{x+1}}{2}\right)^2-x=\frac{1}{2}\]它表示函数$f(x)=\left(\dfrac{\sqrt{x}+\sqrt{x+1}}{2}\right)^2$可以近似成$x+\dfrac{1}{2}$.
 
-这样，即使$S(a,b)$中的$a$、$b$的差值很小我们也能分别求出它们。
+这样，即使$S(a,b)$中的$a$、$b$的差值很小我们也能分别求出它们.
 
 根据以上的分析，我们可以这样计算初始值
 \[
@@ -84,14 +87,14 @@ def num2sqrts(n, max_num=1000):
 \end{lstlisting}
 最后，函数\verb|num2sqrts|长度为2的元组作为结果. 若返回\verb|None|，这表示程序没有找到正确的结果.
 
-\begin{figure}[tp]
+\begin{figure}[tb]
     \centering
     \includegraphics[width=0.8\linewidth]{perform.pdf}
     \caption{算法的表现}
     \label{fig:perform1}
 \end{figure}
 
-为了展示算法的表现，我令$-100\leq x\leq100$和$-100\leq y\leq100$，接着记录算法需要多少次循环可求出$S(x,y)$中的$x$和$y$，最后把它们以不同的颜色标识（见图 \ref{fig:perform1}）. 可见，当$x$、$y$之差越大时，需要执行更多次的循环.
+为了展示算法的表现，我令$x\in[-100,100]$和$y\in[-100,100]$，接着记录算法需要多少次循环可求出$S(x,y)$中的$x$和$y$，最后把它们以不同的颜色标识（见图 \ref{fig:perform1}）. 可见，当$x$、$y$之差越大时，需要执行更多次的循环.
 
 不过当我们运行如下（或类似）语句时
 \begin{lstlisting}[language=python]
@@ -102,15 +105,31 @@ num2sqrts(2 * math.sqrt(123))
 最后，我将阐述分母不为1的情况. 再寻找一个算法显得异常低效，我们完全可以穷举分母.
 \begin{lstlisting}[language=python, name=example2]
 def num2sqrts2(value):
-    for n in range(1, 100):
+    for n in range(1, 101):
         if (ret := num2sqrts(value * n)) is not None:
             return *ret, n
 \end{lstlisting}
-毫无疑问，穷举的范围可以随意扩大（在这里是1--99）. 相应的，算法运行的时间也有可能会增加.
+毫无疑问，穷举的范围可以随意扩大（在这里是1至100）. 相应的，算法运行的时间也有可能会增加.
 
 \section{比较}
-% normal_one(34.35s) vs num2sqrts(0.14): 251.22
-使用嵌套的for循环（我称其为 \verb|normal_one| 算法）同样也可以求出两根式之和.
+使用嵌套的for循环（我称其为\verb|normal_one|算法）同样也可以求出两根式之和. 让两种算法分别求出$\sqrt{a}+\sqrt{b}$，其中$a,b\in[0,100]$各5000遍，再记录下平均运行时间（见表 \ref{tab:comp}）. 可见，\verb|num2sqrts|比纯粹的穷举快了约200倍，而且随着范围的扩大，效率可能会进一步地提高.
+
+\begin{table}[tb]
+	\centering
+	\begin{tabular}{cP{2.6}P{5.4}P{3.1}}
+		\toprule
+		算法 &
+		\multicolumn{1}{c}{总时间/$s$} &
+		\multicolumn{1}{c}{平均时间/$\mu s$} &
+		\multicolumn{1}{c}{时间之比} \\
+		\midrule
+		\verb|normal_one| & 81.903242 & 16384.6484 &   1.0 \\
+		\verb|num2sqrts|  &  0.418364 &    83.6728 & 195.7 \\
+		\bottomrule
+	\end{tabular}
+	\caption{两种算法效率的比较，注意时间的单位不同.}
+	\label{tab:comp}
+\end{table}
 
 mpmath\cite{mpmath}有\verb|mpmath.identify|函数也可以将浮点数转换为数学表达式，且支持更复杂的形式：
 \begin{lstlisting}[language=python]
@@ -124,7 +143,7 @@ sqrt(2*sqrt(6) + 5)
 但是，参照上述的运行结果，问题则变成了化简双重根号，就需要编写化简双重根号的程序了，这里不再赘述.
 
 \section{结论}
-在这篇文章中，我介绍了 \verb|num2sqrts| 算法，它可以将一些浮点数转换为与之相等的、具有特定形式的数学表达式. 同时，该算法简单、快速，适合应用在科学计算器中.
+在这篇文章中，我介绍了\verb|num2sqrts|算法，它可以将一些浮点数转换为与之相等的、具有特定形式的数学表达式. 同时，该算法简单、快速，适合应用在科学计算器中.
 
 \printbibliography[title={参考文献}]
 

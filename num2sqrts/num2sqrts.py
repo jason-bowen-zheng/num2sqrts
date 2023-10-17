@@ -9,8 +9,8 @@ def _fsqrt(n):
 
 
 def normal_one(n):
-    for x in range(1001):
-        for y in range(1001):
+    for x in range(101):
+        for y in range(101):
             if math.isclose(_fsqrt(x) + _fsqrt(y), n):
                 return x, y
 
@@ -42,11 +42,10 @@ def num2sqrts(n, max_num=1000, count_loops=False):
 
 
 def compare():
-    print("normal_one vs num2sqrts")
     random.seed(100)
     total_no = 0
-    bar = Bar("normal_one", max=1000, suffix="%(percent)d%%")
-    for i in range(1000):
+    bar = Bar("normal_one", max=5000, suffix="%(percent)d%%")
+    for i in range(5000):
         x, y = random.randint(0, 100), random.randint(0, 100)
         now = time()
         normal_one(_fsqrt(x) + _fsqrt(y))
@@ -56,8 +55,8 @@ def compare():
 
     random.seed(100)
     total_ns = 0
-    bar = Bar("num2sqrts ", max=1000, suffix="%(percent)d%%")
-    for i in range(1000):
+    bar = Bar("num2sqrts ", max=5000, suffix="%(percent)d%%")
+    for i in range(5000):
         x, y = random.randint(0, 100), random.randint(0, 100)
         now = time()
         num2sqrts(_fsqrt(x) + _fsqrt(y))
