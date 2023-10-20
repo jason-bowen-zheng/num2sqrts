@@ -55,9 +55,9 @@
 
 为了书写方便，下面规定一负数的平方根是其绝对值平方根的相反数.
 
-已知$n=S(a,b)$，初始值$\text{start}=start(n)$，令$\text{step}=0.5$并找到第一个数字\[\alpha=\text{start}-\text{step}\]接着就能求出第二个数字\[\beta=\frac{n}{2}-|\sqrt{a}-\frac{n}{2}|\]$\beta$必须是一个整数，我们接下来还要做如下操作\[\beta=\sqrt{\sgn(\beta)\mathrm{round}(\beta^2)}\]其中\verb|round|表示舍入到最近的整数.
+已知$n=S(a,b)$，初始值$\text{start}=start(n)$，令$\text{step}=0.5$并找到第一个数字\[p=\text{start}-\text{step}\]接着就能求出第二个数字\[q=\frac{n}{2}-|\sqrt{p}-\frac{n}{2}|\]$q$必须是一个整数，我们接下来还要做如下操作\[q=\sqrt{\sgn(q)\mathrm{round}(q^2)}\]其中\verb|round|表示舍入到最近的整数.
 
-如果$|\sqrt{\alpha}+\sqrt{\beta}-n|\leq\varepsilon$，其中$\varepsilon$表示一个很小的数，那么$\alpha$和$\beta$就是所求的$a$和$b$. 否则我们令$\text{step}=\text{step}+1$，继续向正无穷方向搜索.
+如果$|\sqrt{p}+\sqrt{q}-n|\leq\varepsilon$，其中$\varepsilon$表示一个很小的数，那么$p$和$q$就是所求的$a$和$b$. 否则我们令$\text{step}=\text{step}+1$，继续向正无穷方向搜索.
 
 \section{实现}
 以下是本算法的Python实现.
@@ -88,7 +88,7 @@ def num2sqrts(n, max_num=1000):
                 int(round(math.copysign(b ** 2, b)))
         t += 1
 \end{lstlisting}
-最后，函数\verb|num2sqrts|长度为2的元组作为结果. 若返回\verb|None|，这表示程序没有找到正确的结果.
+最后，函数\verb|num2sqrts|以长度为2的元组作为结果. 若返回\verb|None|，这表示程序没有找到正确的结果.
 
 \begin{figure}[tb]
     \centering
@@ -103,7 +103,7 @@ def num2sqrts(n, max_num=1000):
 \begin{lstlisting}[language=python]
 num2sqrts(2 * math.sqrt(123))
 \end{lstlisting}
-函数返回\verb|(492, 0)|，循环执行了438次. 不过$2\sqrt{123}$这个结果可以以一个更简单的算法找到，故我将图 \ref{fig:perform1} 中一、三象限对角线上的值全部赋值为1.
+函数返回\verb|(492, 0)|，循环执行了438次. 不过$2\sqrt{123}$这个结果可以用一个更简单的算法找到，故我将图 \ref{fig:perform1} 中一、三象限对角线上的值全部赋值为1.
 
 最后，我将阐述分母不为1的情况. 再寻找一个算法显得异常低效，我们完全可以穷举分母.
 \begin{lstlisting}[language=python, name=example2]
@@ -130,11 +130,11 @@ def num2sqrts2(value):
 		\verb|num2sqrts|  &  0.418364 &    83.6728 & 195.7 \\
 		\bottomrule
 	\end{tabular}
-	\caption{两种算法效率的比较，注意时间的单位不同.}
+	\caption{两种算法效率的比较}
 	\label{tab:comp}
 \end{table}
 
-使用PSLQ\cite{Ferguson1992APT}等整数关系探测算法，可以将浮点数转换为更复杂的数学表达式. 例如mpmath\cite{mpmath}的\verb|mpmath.identify|函数：
+使用PSLQ\cite{ferguson1991}等整数关系探测算法，也能达成此目的，甚至可以将浮点数转换为更复杂的数学表达式，例如mpmath\cite{mpmath}的\verb|mpmath.identify|函数：
 \begin{lstlisting}[language=python, numbers=none]
 >>> import mpmath, sympy
 >>> s = mpmath.identify(mpmath.sqrt(2) + mpmath.sqrt(3))
