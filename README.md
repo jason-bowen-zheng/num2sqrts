@@ -12,7 +12,7 @@
 >>> num2str(-2 * sqrt(3))
 '-2sqrt(3)'
 >>> num2str(sqrt(2) + sqrt(3))
-'sqrt(3)+sqrt(2)'
+'sqrt(2)+sqrt(3)'
 ```
 
 就是这样，它能将浮点数转换为数学表达式：

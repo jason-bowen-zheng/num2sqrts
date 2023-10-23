@@ -1,4 +1,3 @@
-from progress.bar import Bar
 import math
 import random
 from time import time
@@ -19,7 +18,7 @@ def num2sqrts(n, max_num=1000, count_loops=False):
     if n >= 0:
         mid = math.floor((n / 2) ** 2) + 0.5
     elif n < 0:
-        mid = math.ceil(-(n / 2) ** 2) - 0.5
+        mid = math.ceil(-((n / 2) ** 2)) - 0.5
     actual_mid = n / 2
     loops = 1
     t = 0.5
@@ -27,21 +26,24 @@ def num2sqrts(n, max_num=1000, count_loops=False):
         a = _fsqrt(mid + t)
         d = math.fabs(a - actual_mid)
         b = actual_mid - d
-        b = _fsqrt(math.copysign(round(b ** 2), b))
-        if abs(a ** 2) > max_num or abs(b ** 2) > max_num:
+        b = _fsqrt(math.copysign(round(b**2), b))
+        if abs(a**2) > max_num or abs(b**2) > max_num:
             if count_loops:
                 return loops
             return
         if math.isclose(a + b, n):
             if count_loops:
                 return loops
-            return int(round(math.copysign(a ** 2, a))), \
-                int(round(math.copysign(b ** 2, b)))
+            return int(round(math.copysign(a**2, a))), int(
+                round(math.copysign(b**2, b))
+            )
         loops += 1
         t += 1
 
 
 def compare():
+    from progress.bar import Bar
+
     random.seed(100)
     total_no = 0
     bar = Bar("normal_one", max=5000, suffix="%(percent)d%%")
@@ -69,8 +71,10 @@ def compare():
 
 
 def perform():
+    from progress.bar import Bar
     import matplotlib.pyplot as plt
     import numpy as np
+
     mat = np.zeros((201, 201))
     bar = Bar("Processing", max=201 * 201, suffix="%(percent)d%%")
     for x in range(-100, 101):
@@ -78,7 +82,9 @@ def perform():
             if x == y:
                 mat[x + 100][-y + 100] = 1
             else:
-                mat[x + 100][-y + 100] = num2sqrts(_fsqrt(x) + _fsqrt(y), count_loops=True)
+                mat[x + 100][-y + 100] = num2sqrts(
+                    _fsqrt(x) + _fsqrt(y), count_loops=True
+                )
             bar.next()
     fig, ax = plt.subplots()
     img = ax.matshow(mat)
@@ -93,6 +99,7 @@ def perform():
 
 if __name__ == "__main__":
     from sys import argv
+
     if argv[1] == "perform":
         perform()
     elif argv[1] == "compare":

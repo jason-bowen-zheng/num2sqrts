@@ -1,33 +1,42 @@
+from typing import Tuple as _Tuple, Optional as _Optional
 from fractions import Fraction as _Frac
 import math as _math
 
 
-def _num2sqrts(n, max_num=1000):
+def _num2sqrts(n: float, max_num=1000) -> _Optional[_Tuple[int]]:
     if n >= 0:
         mid = _math.floor((n / 2) ** 2) + 0.5
     elif n < 0:
-        mid = _math.ceil(-(n / 2) ** 2) - 0.5
+        mid = _math.ceil(-((n / 2) ** 2)) - 0.5
 
-    def fsqrt(n): return _math.copysign(_math.sqrt(_math.fabs(n)), n)
+    def fsqrt(n):
+        return _math.copysign(_math.sqrt(_math.fabs(n)), n)
+
     actual_mid = n / 2
     t = 0.5
     while True:
         a = fsqrt(mid + t)
         d = _math.fabs(a - actual_mid)
         b = actual_mid - d
-        b = fsqrt(_math.copysign(round(b ** 2), b))
-        if abs(a ** 2) > max_num or abs(b ** 2) > max_num:
+        b = fsqrt(_math.copysign(round(b**2), b))
+        if abs(a**2) > max_num or abs(b**2) > max_num:
             return None
         if _math.isclose(a + b, n):
-            return int(round(_math.copysign(a ** 2, a))), \
-                int(round(_math.copysign(b ** 2, b)))
+            return int(round(_math.copysign(a**2, a))), int(
+                round(_math.copysign(b**2, b))
+            )
         t += 1
 
 
 def _simplify(value):
-    """化简形如`sqrt(a)`的根式，value是根号内正整数。"""
+    """
+    Simplify a radical form of `sqrt(value)`,
+    `value` is a ppositive integer in the root sign.
+    """
     flag = 1 if value > 0 else -1
     value = abs(value)
+    if value == 1:
+        return (flag, 1)
     i, result = 2, []
     while True:
         if value == i:
@@ -50,41 +59,34 @@ def _simplify(value):
 
 
 def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=False):
-    """将浮点数转换为数学表达式：
-
-    1. 分子、分母都为整数的分数
-    2. ±sqrt(a)/b型的数（a、b为整数）
-    3. (±sqrt(a)±sqrt(b))/c型的数（a、b、c都是整数）
-    4. 对上述(1)或(2)型的数乘以π
-    5. 对上述(1)或(2)型的数施加反三角运算
+    """Converting floating point numbers to math expressions.
 
     max_num : dict
-        精度控制：`{"frac": <分子、分母允许的最大值>, "sqrts": <给_num2sqrts的max_num参数>}`
+        Precision control.
     arcus : str
-        使用哪个反三角函数表示，`asin`、`acos`或`atan`之一
+        Which inverse trignometric function to use, in `asin`, `acos` or `atan`.
     twice : bool
-        防止递归，请不要将它改为`True`
+        Prevent recursion, please don't change it to `True`.
     """
     assert arcus in ["asin", "acos", "atan"]
     if int(value) == value:
-        return "%d" % value
+        return str(value)
     flag = "" if value > 0 else "-"
     a, b = _Frac(value).limit_denominator(max_num["frac"]).as_integer_ratio()
     if _math.isclose(value, a / b):
-        return "%d/%d" % (a, b)
-    a, b = _Frac(
-        value ** 2).limit_denominator(max_num["frac"]).as_integer_ratio()
-    if _math.isclose(value ** 2, a / b):
+        return f"{a}/{b}"
+    a, b = _Frac(value**2).limit_denominator(max_num["frac"]).as_integer_ratio()
+    if _math.isclose(value**2, a / b):
         if b == 1:
-            outter, inner = _simplify(a)
-            return "%s%ssqrt(%d)" % (flag, "" if outter == 1 else outter, inner)
+            outer, inner = _simplify(a)
+            return f"{flag}{'' if outer == 1 else outer}sqrt({inner})"
         elif (a == 1) and (b != 1):
-            return "%ssqrt(%d)/%d" % (flag, b, b)
+            return f"{flag}sqrt({b})/{b}"
         else:
-            outter, inner = _simplify(a * b)
-            fact = _math.gcd(outter, b)
-            a, b = int(outter / fact), b / fact
-            return "%s%ssqrt(%d)/%d" % (flag, "" if a == 1 else a, inner, b)
+            outer, inner = _simplify(a * b)
+            fact = _math.gcd(outer, b)
+            a, b = int(outer / fact), int(b / fact)
+            return f"{flag}{'' if a == 1 else a}sqrt({inner})/{b}"
     if twice:
         return None
     if (s := num2str(value / _math.pi, max_num=max_num, twice=True)) is not None:
@@ -99,18 +101,32 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
             return s + pi
     f = getattr(_math, arcus[1:])
     if (s := num2str(f(value), max_num=max_num, twice=True)) is not None:
-        return "%s(%s)" % (arcus, s)
-    # 请允许我在这里硬编码一个数据，不然的话就太~慢~啦~
+        return f"{arcus}({s})"
     for c in range(1, 101):
         if (l := _num2sqrts(value * c, max_num=max_num["frac"])) is not None:
-            outter_a, inner_a = _simplify(l[0])
-            outter_b, inner_b = _simplify(l[1])
-            flag_a = "" if outter_a > 0 else "-"
-            flag_b = "+" if outter_b > 0 else "-"
-            outter_a = "" if abs(outter_a) == 1 else abs(outter_a)
-            outter_b = "" if abs(outter_b) == 1 else abs(outter_b)
-            if c == 1:
-                return "%s%ssqrt(%d)%s%ssqrt(%d)" % (flag_a, outter_a, inner_a, flag_b, outter_b, inner_b)
+            outer_a, inner_a = _simplify(l[0])
+            outer_b, inner_b = _simplify(l[1])
+            flag = ""
+            if c != 1 and outer_a < 0 and outer_b < 0:
+                flag = "-"
+                outer_a, outer_b = -outer_a, -outer_b
+            if (inner_b == 1 and inner_a != 1) or (inner_a < inner_b and not l[0] > l[1]):
+                outer_a, outer_b = outer_b, outer_a
+                inner_a, inner_b = inner_b, inner_a
+            if inner_a != 1:
+                part_a = f"{'' if outer_a > 0 else '-'}{'' if abs(outer_a) == 1 else abs(outer_a)}sqrt({inner_a})"
             else:
-                return "(%s%ssqrt(%d)%s%ssqrt(%d))/%d" % (flag_a, outter_a, inner_a, flag_b, outter_b, inner_b, c)
+                part_a = str(outer_a)
+            if inner_b != 1:
+                part_b = f"{'+' if outer_b > 0 else '-'}{'' if abs(outer_b) == 1 else abs(outer_b)}sqrt({inner_b})"
+            else:
+                part_b = ("+" if outer_b > 0 else "") + str(outer_b)
+            expr = part_a + part_b
+            if c == 1:
+                return expr
+            else:
+                return f"{flag}({expr})/{c}"
     return str(value)
+
+
+__all__ = "num2str"
