@@ -31,31 +31,29 @@ def _num2sqrts(n: float, max_num=1000) -> _Optional[_Tuple[int]]:
 def _simplify(value):
     """
     Simplify a radical form of `sqrt(value)`,
-    `value` is a ppositive integer in the root sign.
+    `value` is a positive integer in the root sign.
     """
     flag = 1 if value > 0 else -1
     value = abs(value)
     if value == 1:
         return (flag, 1)
-    i, result = 2, []
-    while True:
-        if value == i:
-            result.append(i)
-            break
-        if _math.gcd(value, i) == i:
-            result.append(i)
-            value = value // i
-            i = 2
-            continue
-        i += 1
-    inner, outter = [], 1
-    for i in result:
-        if inner.count(i) == 1:
-            inner.remove(i)
-            outter *= i
+    i, cache, inner, outer = 1, [], value, 1
+    while inner != 1:
+        for m in [i, i - 1]:
+            if cache.count(m) == 2:
+                outer *= m
+                cache.remove(m)
+                cache.remove(m)
+        if _math.gcd(inner, i) != 1:
+            inner //= i
+            cache.append(i)
         else:
-            inner.append(i)
-    return flag * outter, _math.prod(inner)
+            i += 1
+    if cache.count(i) == 2:
+        outer *= i
+        cache.remove(i)
+        cache.remove(i)
+    return flag * outer, _math.prod(cache)
 
 
 def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=False):
@@ -70,7 +68,7 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
     """
     assert arcus in ["asin", "acos", "atan"]
     if int(value) == value:
-        return str(value)
+        return str(int(value))
     flag = "" if value > 0 else "-"
     a, b = _Frac(value).limit_denominator(max_num["frac"]).as_integer_ratio()
     if _math.isclose(value, a / b):
@@ -110,7 +108,9 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
             if c != 1 and outer_a < 0 and outer_b < 0:
                 flag = "-"
                 outer_a, outer_b = -outer_a, -outer_b
-            if (inner_b == 1 and inner_a != 1) or (inner_a < inner_b and not l[0] > l[1]):
+            if (inner_b == 1 and inner_a != 1) or (
+                inner_a < inner_b and not l[0] > l[1]
+            ):
                 outer_a, outer_b = outer_b, outer_a
                 inner_a, inner_b = inner_b, inner_a
             if inner_a != 1:
