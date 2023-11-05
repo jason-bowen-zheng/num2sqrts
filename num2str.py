@@ -37,7 +37,7 @@ def _simplify(value):
     value = abs(value)
     if value == 1:
         return (flag, 1)
-    i, cache, inner, outer = 1, [], value, 1
+    i, cache, inner, outer = 2, [], value, 1
     while inner != 1:
         for m in [i, i - 1]:
             if cache.count(m) == 2:
