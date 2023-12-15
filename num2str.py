@@ -1,6 +1,7 @@
-from typing import Tuple as _Tuple, Optional as _Optional
-from fractions import Fraction as _Frac
 import math as _math
+from fractions import Fraction as _Frac
+from typing import Optional as _Optional
+from typing import Tuple as _Tuple
 
 
 def _num2sqrts(n: float, max_num=1000) -> _Optional[_Tuple[int]]:
@@ -56,17 +57,14 @@ def _simplify(value):
     return flag * outer, _math.prod(cache)
 
 
-def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=False):
+def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, twice=False):
     """Converting floating point numbers to math expressions.
 
     max_num : dict
         Precision control.
-    arcus : str
-        Which inverse trignometric function to use, in `asin`, `acos` or `atan`.
     twice : bool
         Prevent recursion, please don't change it to `True`.
     """
-    assert arcus in ["asin", "acos", "atan"]
     if int(value) == value:
         return str(int(value))
     flag = "" if value > 0 else "-"
@@ -97,9 +95,6 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
             if s in ["1", "-1"]:
                 s = flag
             return s + pi
-    f = getattr(_math, arcus[1:])
-    if (s := num2str(f(value), max_num=max_num, twice=True)) is not None:
-        return f"{arcus}({s})"
     for c in range(1, 101):
         if (l := _num2sqrts(value * c, max_num=max_num["frac"])) is not None:
             outer_a, inner_a = _simplify(l[0])
@@ -109,7 +104,7 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, arcus="acos", twice=Fa
                 flag = "-"
                 outer_a, outer_b = -outer_a, -outer_b
             if (inner_b == 1 and inner_a != 1) or (
-                inner_a < inner_b and not l[0] > l[1]
+                inner_a < inner_b and not abs(l[0]) > abs(l[1])
             ):
                 outer_a, outer_b = outer_b, outer_a
                 inner_a, inner_b = inner_b, inner_a

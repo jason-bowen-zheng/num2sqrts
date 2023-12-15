@@ -20,6 +20,10 @@
 		});
 	</script>
 	<style>
+		ol.available-format>li:not(:last-child) {
+			padding-bottom: 5px;
+		}
+
 		img {
 			display: block;
 			margin: 0 auto;
@@ -35,8 +39,7 @@
 		@media (min-width: 576px) {
 
 			body {
-				margin-left: 5%;
-				margin-right: 5%;
+				margin: 0 10% 3%;
 			}
 
 			img {
@@ -48,11 +51,12 @@
 
 <body>
 	<h1 style="text-align:center;">num2str</h1>
-	<p><i>num2str</i> is a tiny Python library to convert a floating number to mathematical expressions. The algorithm,
+	<p><i>num2str</i> is a tiny Python library to convert a floating number into some specific mathematical expressions.
+		The algorithm,
 		which can be used in numerical calculation tools, is simple and efficient.</p>
 	<p>Source file can be downloaded <a href="https://github.com/jason-bowen-zheng/num2str">here</a>.</p>
-	<p>The following example shows how to use this lib:</p>
-	<pre>
+	<p>The following example shows how to use this library:</p>
+	<pre translate="no">
 &gt;&gt;&gt; from math import *
 &gt;&gt;&gt; from num2str import num2str
 &gt;&gt;&gt; num2str(3 / 5)
@@ -65,15 +69,14 @@
 '(sqrt(6)-sqrt(2))/4'
 	</pre>
 	<p>It supports the following formats:</p>
-	<ol>
-		<li>Fraction $\frac{a}{b}$</li>
-		<li>Root $\frac{\sqrt{a}}{b}$</li>
+	<ol class="available-format">
+		<li>$\frac{a}{b}$</li>
+		<li>$\frac{\sqrt{a}}{b}$</li>
+		<li>$\frac{\sqrt{a}+\sqrt{b}}{c}$</li>
 		<li>$\text{some value}\times\pi$</li>
-		<li>$\arcsin$, $\arccos$ and $\arctan$</li>
-		<li>Two square roots $\frac{\sqrt{a}+\sqrt{b}}{c}$</li>
 	</ol>
-	<p>The $n$ in $n\pi$, $\arcsin n$, $\arccos n$ and $\arctan n$ only support fraction and root.</p>
-	<p>We use a new algorithm to calculate the (5) format, You can find more information in <a href="num2sqrts.pdf">this
+	<p>We use a new algorithm to calculate the (3) format, You can find more information about the algorithm in <a
+			href="num2sqrts.pdf">this
 			article</a>.</p>
 	<img src="perform.png" alt="perform">
 	<p>The above figure is about the algorithm's efficency. This indicates how many steps it takes for the algorithm to
