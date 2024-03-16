@@ -1,16 +1,14 @@
 import math as _math
 from fractions import Fraction as _Frac
-from typing import Optional as _Optional
-from typing import Tuple as _Tuple
 
 
-def _num2sqrts(n: float, max_num=1000) -> _Optional[_Tuple[int]]:
+def _num2sqrts(n: float, max_num=1000) -> tuple[int, int] | None:
     if n >= 0:
         mid = _math.floor((n / 2) ** 2) + 0.5
-    elif n < 0:
+    else:
         mid = _math.ceil(-((n / 2) ** 2)) - 0.5
 
-    def fsqrt(n):
+    def fsqrt(n: float) -> float:
         return _math.copysign(_math.sqrt(_math.fabs(n)), n)
 
     actual_mid = n / 2
@@ -21,7 +19,7 @@ def _num2sqrts(n: float, max_num=1000) -> _Optional[_Tuple[int]]:
         b = actual_mid - d
         b = fsqrt(_math.copysign(round(b**2), b))
         if abs(a**2) > max_num or abs(b**2) > max_num:
-            return None
+            return
         if _math.isclose(a + b, n):
             return int(round(_math.copysign(a**2, a))), int(
                 round(_math.copysign(b**2, b))
@@ -29,7 +27,7 @@ def _num2sqrts(n: float, max_num=1000) -> _Optional[_Tuple[int]]:
         t += 1
 
 
-def _simplify(value):
+def _simplify(value: int) -> tuple[int, int]:
     """
     Simplify a radical form of `sqrt(value)`,
     `value` is a positive integer in the root sign.
@@ -57,10 +55,14 @@ def _simplify(value):
     return flag * outer, _math.prod(cache)
 
 
-def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, twice=False):
+def num2str(
+    value: int | float,
+    max_num: dict[str, int] = {"frac": 1000, "sqrts": 1000},
+    twice: bool = False,
+) -> str | None:
     """Converting floating point numbers to math expressions.
 
-    max_num : dict
+    max_num : dict[str, int]
         Precision control.
     twice : bool
         Prevent recursion, please don't change it to `True`.
@@ -84,7 +86,7 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, twice=False):
             a, b = int(outer / fact), int(b / fact)
             return f"{flag}{'' if a == 1 else a}sqrt({inner})/{b}"
     if twice:
-        return None
+        return
     if (s := num2str(value / _math.pi, max_num=max_num, twice=True)) is not None:
         pi = chr(960)
         if s.startswith("-1/") or s.startswith("1/"):
@@ -124,4 +126,4 @@ def num2str(value, max_num={"frac": 1000, "sqrts": 1000}, twice=False):
     return str(value)
 
 
-__all__ = "num2str"
+__all__ = ("num2str",)

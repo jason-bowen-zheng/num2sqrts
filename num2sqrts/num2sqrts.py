@@ -3,21 +3,23 @@ import random
 from time import time
 
 
-def _fsqrt(n):
+def _fsqrt(n: float) -> float:
     return math.copysign(math.sqrt(math.fabs(n)), n)
 
 
-def normal_one(n):
+def normal_one(n: float) -> tuple[int, int] | None:
     for x in range(101):
         for y in range(101):
             if math.isclose(_fsqrt(x) + _fsqrt(y), n):
                 return x, y
 
 
-def num2sqrts(n, max_num=1000, count_loops=False):
+def num2sqrts(
+    n: int | float, max_num: int = 1000, count_loops: bool = False
+) -> int | tuple[int, int] | None:
     if n >= 0:
         mid = math.floor((n / 2) ** 2) + 0.5
-    elif n < 0:
+    else:
         mid = math.ceil(-((n / 2) ** 2)) - 0.5
     actual_mid = n / 2
     loops = 1
@@ -71,9 +73,9 @@ def compare():
 
 
 def perform():
-    from progress.bar import Bar
     import matplotlib.pyplot as plt
     import numpy as np
+    from progress.bar import Bar
 
     mat = np.zeros((201, 201))
     bar = Bar("Processing", max=201 * 201, suffix="%(percent)d%%")

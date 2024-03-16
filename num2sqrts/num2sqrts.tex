@@ -69,7 +69,7 @@ import math
 def num2sqrts(n, max_num=1000):
     if n >= 0:
         mid = math.floor((n / 2) ** 2) + 0.5
-    elif n < 0:
+    else:
         mid = math.ceil(-(n / 2) ** 2) - 0.5
     fsqrt = lambda n: math.copysign(math.sqrt(math.fabs(n)), n)
     actual_mid = n / 2
