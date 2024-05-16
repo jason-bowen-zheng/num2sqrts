@@ -44,41 +44,32 @@ def num2sqrts(
 
 
 def compare():
-    from progress.bar import Bar
-
     random.seed(100)
     total_no = 0
-    bar = Bar("normal_one", max=5000, suffix="%(percent)d%%")
     for i in range(5000):
         x, y = random.randint(0, 100), random.randint(0, 100)
         now = time()
         normal_one(_fsqrt(x) + _fsqrt(y))
         total_no += time() - now
-        bar.next()
-    print()
 
     random.seed(100)
     total_ns = 0
-    bar = Bar("num2sqrts ", max=5000, suffix="%(percent)d%%")
     for i in range(5000):
         x, y = random.randint(0, 100), random.randint(0, 100)
         now = time()
         num2sqrts(_fsqrt(x) + _fsqrt(y))
         total_ns += time() - now
-        bar.next()
-    print()
-    print("normal_one : %f" % total_no)
-    print("num2sqrts  : %f" % total_ns)
-    print("rate       : %f" % (total_no / total_ns))
+
+    print(f"normal_one : {total_no}")
+    print(f"num2sqrt   : {total_ns}")
+    print(f"rate       : {total_no / total_ns}")
 
 
 def perform():
-    import matplotlib.pyplot as plt
     import numpy as np
-    from progress.bar import Bar
+    import matplotlib.pyplot as plt
 
     mat = np.zeros((201, 201))
-    bar = Bar("Processing", max=201 * 201, suffix="%(percent)d%%")
     for x in range(-100, 101):
         for y in range(-100, 101):
             if x == y:
@@ -87,7 +78,6 @@ def perform():
                 mat[x + 100][-y + 100] = num2sqrts(
                     _fsqrt(x) + _fsqrt(y), count_loops=True
                 )
-            bar.next()
     fig, ax = plt.subplots()
     img = ax.matshow(mat)
     fig.colorbar(img, ax=ax)
@@ -96,7 +86,6 @@ def perform():
     ax.set_ylabel("y")
     ax.yaxis.set_major_formatter(lambda y, pos: int(-y + 100))
     fig.savefig("perform.pdf")
-    print()
 
 
 if __name__ == "__main__":
