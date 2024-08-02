@@ -10,7 +10,7 @@ def _fsqrt(n: float) -> float:
 def normal_one(n: float) -> tuple[int, int] | None:
     for x in range(101):
         for y in range(101):
-            if math.isclose(_fsqrt(x) + _fsqrt(y), n):
+            if math.isclose(_fsqrt(x) + _fsqrt(y), n, rel_tol=1e-16):
                 return x, y
 
 
@@ -33,7 +33,7 @@ def num2sqrts(
             if count_loops:
                 return loops
             return
-        if math.isclose(a + b, n):
+        if math.isclose(a + b, n, rel_tol=1e-16):
             if count_loops:
                 return loops
             return int(round(math.copysign(a**2, a))), int(
@@ -46,7 +46,7 @@ def num2sqrts(
 def compare():
     random.seed(100)
     total_no = 0
-    for i in range(5000):
+    for _ in range(5000):
         x, y = random.randint(0, 100), random.randint(0, 100)
         now = time()
         normal_one(_fsqrt(x) + _fsqrt(y))
@@ -54,7 +54,7 @@ def compare():
 
     random.seed(100)
     total_ns = 0
-    for i in range(5000):
+    for _ in range(5000):
         x, y = random.randint(0, 100), random.randint(0, 100)
         now = time()
         num2sqrts(_fsqrt(x) + _fsqrt(y))

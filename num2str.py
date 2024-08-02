@@ -20,7 +20,7 @@ def _num2sqrts(n: float, max_num=1000) -> tuple[int, int] | None:
         b = fsqrt(_math.copysign(round(b**2), b))
         if abs(a**2) > max_num or abs(b**2) > max_num:
             return
-        if _math.isclose(a + b, n):
+        if _math.isclose(a + b, n, rel_tol=1e-16):
             return int(round(_math.copysign(a**2, a))), int(
                 round(_math.copysign(b**2, b))
             )
@@ -71,10 +71,10 @@ def num2str(
         return str(int(value))
     flag = "" if value > 0 else "-"
     a, b = _Frac(value).limit_denominator(max_num["frac"]).as_integer_ratio()
-    if _math.isclose(value, a / b):
+    if _math.isclose(value, a / b, rel_tol=1e-16):
         return f"{a}/{b}"
     a, b = _Frac(value**2).limit_denominator(max_num["frac"]).as_integer_ratio()
-    if _math.isclose(value**2, a / b):
+    if _math.isclose(value**2, a / b, rel_tol=1e-16):
         if b == 1:
             outer, inner = _simplify(a)
             return f"{flag}{'' if outer == 1 else outer}sqrt({inner})"

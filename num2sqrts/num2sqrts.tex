@@ -82,7 +82,7 @@ def num2sqrts(n, max_num=1000):
 \begin{lstlisting}[language=python, name=example1]
         if abs(a ** 2) > max_num or abs(b ** 2) > max_num:
             return
-        if math.isclose(a + b, n):
+        if math.isclose(a + b, n, rel_tol=1e-16):
             return int(round(math.copysign(a ** 2, a))), \
                 int(round(math.copysign(b ** 2, b)))
         t += 1
