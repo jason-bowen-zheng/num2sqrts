@@ -19,6 +19,7 @@
 }
 \addbibresource{num2sqrts.bib}
 
+\hypersetup{pdfauthor=zhengxyz123, pdftitle=将某些特定的浮点数转换为特定数学表达式的高效算法}
 \title{将某些特定的浮点数转换为形如$\sqrt{a}\pm\sqrt{b}$的数学表达式的高效算法}
 \author{zhengxyz123}
 
@@ -82,7 +83,7 @@ def num2sqrts(n, max_num=1000):
 \begin{lstlisting}[language=python, name=example1]
         if abs(a ** 2) > max_num or abs(b ** 2) > max_num:
             return
-        if math.isclose(a + b, n, rel_tol=1e-16):
+        if math.isclose(a + b, n, rel_tol=1e-12):
             return int(round(math.copysign(a ** 2, a))), \
                 int(round(math.copysign(b ** 2, b)))
         t += 1

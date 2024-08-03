@@ -33,7 +33,7 @@ def num2sqrts(
             if count_loops:
                 return loops
             return
-        if math.isclose(a + b, n, rel_tol=1e-16):
+        if math.isclose(a + b, n, rel_tol=1e-12):
             if count_loops:
                 return loops
             return int(round(math.copysign(a**2, a))), int(
