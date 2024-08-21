@@ -1,7 +1,0 @@
-#!/usr/bin/sh
-
-xelatex num2sqrts.tex
-biber num2sqrts
-xelatex num2sqrts.tex
-xelatex num2sqrts.tex
-rm *.aux *.bbl *.bcf *.blg *.log *.out *.run.xml
