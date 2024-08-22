@@ -2,6 +2,8 @@ import math
 import random
 from time import time
 
+from matplotlib.pyplot import plot
+
 
 def _fsqrt(n: float) -> float:
     return math.copysign(math.sqrt(math.fabs(n)), n)
@@ -79,7 +81,7 @@ def perform():
     ax.xaxis.set_major_formatter(lambda x, pos: str(int(x - 100)))
     ax.set_ylabel("y")
     ax.yaxis.set_major_formatter(lambda y, pos: str(int(-y + 100)))
-    fig.savefig("perform.pdf")
+    fig.savefig("perform.png")
 
 
 if __name__ == "__main__":

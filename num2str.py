@@ -72,6 +72,8 @@ def num2str(
     flag = "" if value > 0 else "-"
     a, b = _Frac(value).limit_denominator(max_num["frac"]).as_integer_ratio()
     if _math.isclose(value, a / b, rel_tol=1e-12):
+        if b == 1:
+            return f"{a}"
         return f"{a}/{b}"
     a, b = _Frac(value**2).limit_denominator(max_num["frac"]).as_integer_ratio()
     if _math.isclose(value**2, a / b, rel_tol=1e-12):
@@ -89,6 +91,8 @@ def num2str(
         return
     if (s := num2str(value / _math.pi, max_num=max_num, twice=True)) is not None:
         pi = chr(960)
+        if s == "0":
+            return "0"
         if s.startswith("-1/") or s.startswith("1/"):
             return s.replace("1/", pi + "/")
         elif "/" in s:
