@@ -23,3 +23,5 @@ It supports the following formats:
 4. $\text{some value}\times\pi$
 
 We use a new algorithm to calculate the (3) format, You can find more information about the algorithm in [this blog](https://zhengxyz123.github.io/coding/num2sqrts).
+
+We have also rewritten all the Python code using C (in progress). You can copy `num2str.c` and `num2str.h` into your own project.

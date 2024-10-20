@@ -36,23 +36,21 @@ def _simplify(value: int) -> tuple[int, int]:
     value = abs(value)
     if value == 1:
         return (flag, 1)
-    i, cache, inner, outer = 2, [], value, 1
+    i, cache, inner, outer = 2, 1, value, 1
     while inner != 1:
         for m in [i, i - 1]:
-            if cache.count(m) == 2:
+            if cache % m ** 2 == 0:
                 outer *= m
-                cache.remove(m)
-                cache.remove(m)
+                cache //= m ** 2
         if _math.gcd(inner, i) != 1:
             inner //= i
-            cache.append(i)
+            cache *= i
         else:
             i += 1
-    if cache.count(i) == 2:
+    if cache % i ** 2 == 0:
         outer *= i
-        cache.remove(i)
-        cache.remove(i)
-    return flag * outer, _math.prod(cache)
+        cache //= i ** 2
+    return flag * outer, cache
 
 
 def num2str(
